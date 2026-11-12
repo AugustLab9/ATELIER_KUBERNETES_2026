@@ -1,0 +1,35 @@
+{
+  "name": "Atelier Kubernetes 2026",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+
+  // 4 cœurs recommandés : 3 nœuds k3d + Portainer
+  "hostRequirements": {
+    "cpus": 4
+  },
+
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+      "minikube": "none"
+    }
+  },
+
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+
+  "forwardPorts": [8080, 8081, 8585, 9000],
+  "portsAttributes": {
+    "8080": { "label": "Ex.2 - nginx (web)" },
+    "8081": { "label": "Bonus - Ingress (Traefik)" },
+    "8585": { "label": "Ex.6 - Mario" },
+    "9000": { "label": "Ex.6 - Portainer" }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "redhat.vscode-yaml"
+      ]
+    }
+  }
+}
