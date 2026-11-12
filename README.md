@@ -73,7 +73,7 @@ Le schéma se lit en trois couches :
 
 | # | Exercice | Notions | Durée |
 |---|----------|---------|-------|
-| 0 | [Mise en place](#exercice-0--mise-en-place) | Template GitHub, Codespaces | 10 min |
+| 0 | [Mise en place](#exercice-0--mise-en-place) | Template GitHub, Codespaces, installation de k3d | 10 min |
 | 1 | [Créer le cluster](#exercice-1--créer-le-cluster) | k3d, nœuds, `kubectl` | 15 min |
 | 2 | [Premier déploiement](#exercice-2--premier-déploiement-impératif) | Deployment, Service, port-forward, auto-réparation | 25 min |
 | 3 | [Modifier un conteneur en direct](#exercice-3--modifier-un-conteneur-en-direct) | `exec`, conteneurs éphémères | 15 min |
@@ -103,8 +103,27 @@ Vous travaillez désormais dans **votre** copie. C'est elle que vous rendrez à 
 ### 0.2 Ouvrir un Codespace
 
 1. Dans **votre** dépôt : **`Code`**, onglet **`Codespaces`**, puis **`Create codespace on main`**.
-2. Patientez 2 à 3 minutes : l'environnement s'installe tout seul (Docker, `kubectl`, `k3d`, extensions VS Code).
-3. VS Code s'ouvre dans le navigateur, avec un terminal Linux en bas.
+2. VS Code s'ouvre dans le navigateur, avec un terminal Linux en bas. Docker et `kubectl` sont déjà installés.
+
+> [!TIP]
+> Si votre compte le permet, préférez une machine **4 cœurs** : `Code`, `Codespaces`, `…`, puis `New with options…` et `Machine type`. Une machine 2 cœurs suffit cependant pour l'atelier.
+
+### 0.3 Installer k3d
+
+```bash
+curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+```
+
+Optionnel mais pratique : un alias `k` pour `kubectl`, avec l'autocomplétion.
+
+```bash
+cat >> ~/.bashrc <<'EOF'
+source <(kubectl completion bash)
+alias k=kubectl
+complete -o default -F __start_kubectl k
+EOF
+source ~/.bashrc
+```
 
 Vérifiez que tout est prêt :
 
@@ -113,12 +132,6 @@ k3d version
 kubectl version --client
 docker ps
 ```
-
-> [!NOTE]
-> **Qu'est-ce qui vient de se passer ?** Le dossier [`.devcontainer/`](.devcontainer/) décrit l'environnement de développement : image de base, outils, ports, extensions. Tous les étudiants ont donc exactement le même environnement. C'est déjà de l'*Infrastructure as Code*.
-
-> [!WARNING]
-> Codespaces consomme votre quota gratuit d'heures. **Arrêtez votre Codespace** à la fin de l'atelier (menu `Codespaces` en bas à gauche, puis `Stop Current Codespace`). Avec le [GitHub Student Pack](https://education.github.com/pack), le quota est plus généreux.
 
 ---
 
@@ -165,7 +178,7 @@ kubectl get all
 ```
 
 > [!TIP]
-> Dans votre terminal, `k` est un alias de `kubectl`, et la touche <kbd>Tab</kbd> complète les commandes et les noms de ressources.
+> Si vous avez créé l'alias à l'étape 0.3, `k` remplace `kubectl`, et la touche <kbd>Tab</kbd> complète les commandes et les noms de ressources.
 
 ### 2.2 Accéder au site
 
