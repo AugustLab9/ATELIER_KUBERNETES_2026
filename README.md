@@ -190,6 +190,14 @@ kubectl port-forward svc/web 8080:80 > /tmp/web.log 2>&1 &
 
 Ouvrez l'onglet **`PORTS`** de VS Code (à côté du terminal) et cliquez sur l'icône 🌐 du port **8080** : la page *Welcome to nginx!* s'affiche.
 
+> [!IMPORTANT]
+> **Relancer un tunnel proprement.** Un `port-forward` échoue (`Exit 1`) si un ancien tunnel occupe encore le port, ou si le pod n'est pas encore prêt. La cause s'affiche dans `/tmp/web.log`. Pour relancer, utilisez toujours ces trois commandes :
+> ```bash
+> pkill -f "port-forward svc/web"            # 1. couper l'ancien tunnel
+> kubectl rollout status deploy/web          # 2. attendre que le pod soit prêt
+> kubectl port-forward svc/web 8080:80 > /tmp/web.log 2>&1 &   # 3. relancer
+> ```
+
 ### 2.3 Casser pour comprendre
 
 Dans un **second terminal** (bouton `+` du terminal), observez les pods en temps réel :
@@ -230,9 +238,11 @@ echo "<h1>Bienvenue sur mon site Web</h1>" > /usr/share/nginx/html/index.html
 exit
 ```
 
-Relancez le port-forward (le précédent a peut-être expiré) puis rechargez la page du port 8080 :
+Le tunnel a cassé à l'exercice 2.3. Relancez-le, puis rechargez la page du port 8080 :
 
 ```bash
+pkill -f "port-forward svc/web"
+kubectl rollout status deploy/web
 kubectl port-forward svc/web 8080:80 > /tmp/web.log 2>&1 &
 ```
 
@@ -244,7 +254,7 @@ kubectl delete pod -l app=web
 
 **À vous :**
 - Rechargez la page. Que se passe-t-il ? Consultez `/tmp/web.log`.
-- Relancez le port-forward. Votre message est-il toujours là ?
+- Relancez le tunnel (les trois commandes ci-dessus). Votre message est-il toujours là ?
 
 <details>
 <summary>💡 Explication</summary>
@@ -303,6 +313,7 @@ Arrêtez l'ancien tunnel et ouvrez-en un vers le nouveau site :
 
 ```bash
 pkill -f "kubectl port-forward"
+kubectl rollout status deploy/site
 kubectl port-forward svc/site 8080:80 > /tmp/site.log 2>&1 &
 ```
 
@@ -314,7 +325,13 @@ Votre page personnalisée doit s'afficher sur le port 8080.
 kubectl delete pod -l app=site
 ```
 
-Relancez le port-forward. Cette fois, votre page **survit**.
+Relancez le tunnel, puis rechargez la page. Cette fois, votre page **survit**.
+
+```bash
+pkill -f "port-forward svc/site"
+kubectl rollout status deploy/site
+kubectl port-forward svc/site 8080:80 > /tmp/site.log 2>&1 &
+```
 
 ### 4.4 Modifier le site, version déclarative
 
