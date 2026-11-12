@@ -1,8 +1,62 @@
 # Atelier Kubernetes 2026
 
-> **Public :** M2 Informatique · **Durée :** environ 3 h · **Prérequis :** bases Linux et Docker, un compte GitHub
+> **Public :** M2 Informatique · **Prérequis :** bases Linux et Docker, un compte GitHub
 
 Pendant cet atelier, vous allez monter un **vrai cluster Kubernetes** (1 master et 2 workers) dans votre navigateur, y déployer des applications, d'abord à la main, puis « comme en production » avec des manifestes YAML, et enfin le piloter depuis une interface graphique (Portainer).
+
+### Architecture de l'atelier
+
+```mermaid
+flowchart LR
+    user(["🧑‍💻 Vous<br/>(navigateur)"])
+
+    subgraph gh["☁️ GitHub"]
+        repo[("Votre dépôt<br/>(créé depuis le template)")]
+
+        subgraph cs["GitHub Codespace (VM Linux)"]
+            vscode["VS Code + terminal<br/>kubectl · k3d"]
+            pf["kubectl port-forward<br/>8080 · 8585 · 9000"]
+
+            subgraph docker["Docker : cluster k3d « lab »"]
+                lb["Load balancer<br/>:8081 → Traefik"]
+
+                subgraph server["Nœud server-0 (control plane)"]
+                    api["API Server"]
+                end
+
+                subgraph agent0["Nœud agent-0 (worker)"]
+                    p1["pod site"]
+                    p2["pod web"]
+                    p3["pod portainer"]
+                end
+
+                subgraph agent1["Nœud agent-1 (worker)"]
+                    p4["pod site"]
+                    p5["pod site"]
+                    p6["pod mario"]
+                end
+            end
+        end
+    end
+
+    user -- "onglet PORTS<br/>(URL *.app.github.dev)" --> pf
+    user -- "bonus Ingress" --> lb
+    user -. "Use this template<br/>git push (rendu)" .-> repo
+    repo -- "Create codespace" --> cs
+    vscode -- "kubectl apply / get / exec" --> api
+    p3 -- "pilote" --> api
+    api -- "planifie les pods" --> agent0 & agent1
+    pf --> p1 & p3 & p6
+    lb --> p1 & p4 & p5
+```
+
+Le schéma se lit en trois couches :
+
+- **GitHub** : vous créez votre dépôt à partir de ce template, puis un **Codespace**, c'est-à-dire une machine Linux dans le cloud avec VS Code dans le navigateur.
+- **Docker** : dans ce Codespace, **k3d** lance un cluster Kubernetes dont chaque **nœud est un conteneur Docker** : 1 *control plane* et 2 *workers*.
+- **Kubernetes** : vous pilotez le cluster avec `kubectl`, puis avec **Portainer**, qui lui-même tourne *dans* le cluster. L'**API Server** répartit les pods sur les workers, et vos applications sont rendues accessibles par `port-forward` ou par l'Ingress (bonus).
+
+> La répartition des pods sur les nœuds est indicative : c'est Kubernetes qui décide où les placer (vous le vérifierez à l'exercice 5).
 
 ### Objectifs pédagogiques
 
