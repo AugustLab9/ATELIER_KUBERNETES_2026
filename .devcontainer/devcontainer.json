@@ -1,19 +1,15 @@
 {
   "name": "Atelier Kubernetes 2026",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+
+  // Image par défaut de GitHub Codespaces : Docker, kubectl et helm sont déjà inclus.
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
 
   // 4 cœurs recommandés : 3 nœuds k3d + Portainer
   "hostRequirements": {
     "cpus": 4
   },
 
-  "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
-      "minikube": "none"
-    }
-  },
-
+  // Installe k3d, l'alias 'k' et l'autocomplétion
   "postCreateCommand": "bash .devcontainer/post-create.sh",
 
   "forwardPorts": [8080, 8081, 8585, 9000],
