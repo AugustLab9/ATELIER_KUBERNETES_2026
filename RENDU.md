@@ -38,13 +38,15 @@
 ## Exercice 5 — Scaling & mises à jour
 
 9. Sur quels nœuds se trouvent vos 3 réplicas ? Collez la sortie de `kubectl get pods -l app=site -o wide`.
-   ```
-
-   ```
+   NAME                    READY   STATUS    RESTARTS   AGE     IP          NODE               NOMINATED NODE   READINESS GATES
+site-5cc664db9c-2klc6   1/1     Running   0          3m2s    10.42.0.7   k3d-lab-agent-0    <none>           <none>
+site-5cc664db9c-gnfss   1/1     Running   0          2m47s   10.42.2.8   k3d-lab-server-0   <none>           <none>
+site-5cc664db9c-pkkj7   1/1     Running   0          2m54s   10.42.1.8   k3d-lab-agent-1    <none>           <none>
+Les 3 réplicas sont répartis sur les 3 nœuds : k3d-lab-agent-0, k3d-lab-agent-1 et k3d-lab-server-0.
 10. Avec l'image `nginx:9.99`, quel statut avait le pod ? Quelle commande vous a donné la cause ?
-    >
+    Le pod avait le statut ImagePullBackOff. La commande kubectl describe pod donne la cause dans la section Events : l’image nginx:9.99 n’existe pas, donc Kubernetes n’arrive pas à la télécharger.
 11. Pendant la panne, le site restait-il accessible ? Pourquoi ?
-    >
+    Oui, le site restait accessible. Kubernetes garde les 3 anciens pods en marche tant que le nouveau n’est pas prêt, donc ils continuent de répondre.
 
 ## Exercice 6 — Portainer & Mario
 
