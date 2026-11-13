@@ -51,9 +51,9 @@ Les 3 réplicas sont répartis sur les 3 nœuds : k3d-lab-agent-0, k3d-lab-agent
 ## Exercice 6 — Portainer & Mario
 
 12. URL publique de votre Mario :
-    >
+    https://zany-train-7vgx67gjrjj92x459-8585.app.github.dev/
 13. Retrouvez le Deployment `mario` en ligne de commande. Portainer et `kubectl` parlent-ils au même composant ? Lequel ?
-    >
+    Oui, Portainer et kubectl parlent au même composant : l'API Server du cluster. C'est pour ça que le Deployment mario créé dans Portainer est visible avec kubectl get deploy mario.
 
 ## Bonus (facultatif)
 
